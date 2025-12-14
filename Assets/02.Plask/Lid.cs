@@ -7,46 +7,37 @@ public class Lid : MonoBehaviour
     public static Lid Instance;
     public GameObject WarningSign;
     public List<GameObject> Objects = new List<GameObject>();
+    public Material mat;
     private void OnEnable()
     {
         Instance = this;
     }
-    float time = 0;
     private void Update()
     {
         if (Objects.Count > 0)
         {
-            time += Time.deltaTime;
-        }
-        else
-        {
-            time = 0;
-        }
-
-        if(time > 0.5f)
-        {
-            WarningSign.SetActive(true);
-            Spawner.Instance.PauseObjects();
-        }
-        if (time > 1.5f)
-        {
             foreach (GameObject obj in Objects)
             {
-                obj.GetComponent<Object>().Decompose();
+                if (obj.activeSelf && obj.GetComponent<Object>().PreventingChange == false)
+                    obj.GetComponent<Object>().LidTime += 1;
             }
-            Spawner.Instance.UnPauseObjects();
-            WarningSign.SetActive(false);
+            StartCoroutine(SetLidColor());
         }
-        if(time > 0.5f && time <= 1.5f && Objects.Count == 0)
-        {
-            Spawner.Instance.UnPauseObjects();
-            WarningSign.SetActive(false);
-        }
+    }   
+
+    IEnumerator SetLidColor()
+    {
+        mat.SetColor("_Color", Color.red);
+        yield return new WaitForSeconds(0.1f);
+        mat.SetColor("_Color", Color.white);
+
     }
 
     public void UpdateLidObjects()
     {
-        foreach (GameObject obj in Objects) {
+        for (int i = 0; i < Objects.Count; i++)
+        {
+            GameObject obj = Objects[i];
             if (!obj.activeSelf) Objects.Remove(obj);
         }
     }
@@ -64,11 +55,12 @@ public class Lid : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-
+        
         if (other.gameObject.CompareTag("Object"))
         {
-            if(Objects.Contains(other.gameObject))
+            if (Objects.Contains(other.gameObject))
             {
+                other.GetComponent<Object>().LidTime = 0;
                 Objects.Remove(other.gameObject);
             }
         }

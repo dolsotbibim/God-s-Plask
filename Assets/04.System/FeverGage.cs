@@ -1,17 +1,35 @@
- using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
-
+using DG.Tweening;
 public class FeverGage : MonoBehaviour
 {
     public int MaxFeverStack = 10;
-    public int FeverStack
+    public bool IsFever => feverstack >= MaxFeverStack;
+    float targetFillAmount;
+    public float FeverStack
     {
         get { return feverstack; }
         set
         {
-            feverstack = value;
-            FeverFill.fillAmount = (float)feverstack / MaxFeverStack;
-            Spawner.Instance.SpawnPanel.isFever = feverstack >= MaxFeverStack;
+            if (targetFillAmount >= 1) feverstack = value - MaxFeverStack;
+            else feverstack = value;
+            targetFillAmount = feverstack / MaxFeverStack;
+
+            FeverFill.material.SetFloat("_Fill", targetFillAmount);
+            FeverFill.DOFillAmount(targetFillAmount, 0.25f)
+                    .SetEase(Ease.OutQuad);
+
+            if(targetFillAmount >= 1)
+            {
+                FeverFill.material.SetFloat("_Alpha", 2);
+                Spawner.Instance.SpawnPanel.isFever = true;
+
+            }
+            else
+            {
+                FeverFill.material.SetFloat("_Alpha", 1);
+            }
+
         }
     }
 
@@ -20,25 +38,14 @@ public class FeverGage : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        FeverStack = 0;
     }
 
-    private int feverstack;
+    private float feverstack;
 
     public int FeverBonus = 2;
     public int FeverSpeed = 2;
     public int FeverRambda = 2;
 
     public Image FeverFill;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

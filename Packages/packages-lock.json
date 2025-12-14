@@ -200,6 +200,12 @@
         "com.unity.modules.imgui": "1.0.0"
       }
     },
+    "com.unity.uiextensions": {
+      "version": "file:C:/Users/lee/Downloads/UnityUIExtensions-unity-ui-extensions-7271aab53fc1/UnityUIExtensions-unity-ui-extensions-7271aab53fc1",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.visualscripting": {
       "version": "1.9.8",
       "depth": 0,

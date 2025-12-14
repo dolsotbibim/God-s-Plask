@@ -1,4 +1,4 @@
-using DG.Tweening;
+﻿using DG.Tweening;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -17,7 +17,7 @@ public class CosmicObject : Object
         get => base.Level;
         set
         {
-            level = value;
+            level = Mathf.Clamp(value, 1, 3);
             
             objectType = ObjectType.Cosmic;
             scale = Vector3.one * (1 + (level - 1) * 0.2f) * 0.1f;
@@ -31,7 +31,7 @@ public class CosmicObject : Object
             propertyBlock.SetColor("_Color", colors[level - 1]);
 
             InnerRenderer.SetPropertyBlock(propertyBlock);
-            point = level * 10;
+            point = (int)(level * 10 * Mathf.Pow(1.1f, level));
 
             if (level == 3)
             {
@@ -48,18 +48,26 @@ public class CosmicObject : Object
     }
     public override void OnCollisionEnter(Collision collision)
     {
-        if (isIgnoringLid) return;
+        if (PreventingChange)
+        {
+            return;
+        }
 
         if (collision.gameObject.CompareTag("Object"))
         {
-            if (collision.gameObject.GetComponent<Object>().Level == Level && collision.transform.GetComponent<CosmicObject>())
+            CosmicObject obj = collision.gameObject.GetComponent<CosmicObject>();
+
+            if (obj == null) return;
+
+            if (obj.Level == Level && !obj.PreventingChange)
             {
                 if (transform.position.y < collision.transform.position.y ||
-                (transform.position.y == collision.transform.position.y && gameObject.GetInstanceID() < collision.gameObject.GetInstanceID())
-                )
+                    (transform.position.y == collision.transform.position.y && gameObject.GetInstanceID() < collision.gameObject.GetInstanceID()))
                 {
-                    Spawner.Instance.ReturnObject(collision.gameObject.GetComponent<CosmicObject>());
-                    Spawner.Instance.StartCoroutine(Spawner.Instance.SpawnMergedObject(Level + 1, transform, true));
+                    PreventingChange = true;
+
+                    Spawner.Instance.ReturnObject(obj);
+                    Spawner.Instance.StartCoroutine(Spawner.Instance.SpawnMergedObject(Level + 1, transform.position, true));
                     Spawner.Instance.ReturnObject(this);
                 }
             }
@@ -69,12 +77,19 @@ public class CosmicObject : Object
     IEnumerator DecomposeRoutine()
     {
         yield return new WaitForSeconds(3);
-        Decompose();
+        if(gameObject.activeSelf)
+            Decompose();
     }
 
     public override void Decompose()
     {
-        FindAnyObjectByType<CosmicGage>().CosmicPoint += point;
-        Spawner.Instance.ReturnObject(this);
+        if (gameObject.activeSelf && !PreventingChange)
+        {
+            PreventingChange = true;
+            DecomposePS ps = Spawner.Instance.PoolManager.GetFromPool<DecomposePS>();
+            ps.SetTarget(1, transform.position, scale.x, 1);
+            ps.StartEmit(point);
+            Spawner.Instance.ReturnObject(this);
+        }
     }
 }

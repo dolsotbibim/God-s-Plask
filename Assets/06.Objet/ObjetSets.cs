@@ -4,7 +4,6 @@ public class TestObjet : Objet
 {
     public override void OnEquip()
     {
-        Spawner.Instance.CosmicProbability = 1;
     }
 
     public override void Init()
@@ -20,7 +19,6 @@ public class TestObjet2 : Objet
 {
     public override void OnEquip()
     {
-        Spawner.Instance.CosmicProbability = 1;
     }
 
     public override void Init()
@@ -36,7 +34,6 @@ public class TestObjet3 : Objet
 {
     public override void OnEquip()
     {
-        Spawner.Instance.CosmicProbability = 1;
     }
 
     public override void Init()
@@ -52,7 +49,6 @@ public class TestObjet4 : Objet
 {
     public override void OnEquip()
     {
-        Spawner.Instance.CosmicProbability = 1;
     }
 
     public override void Init()
@@ -68,7 +64,6 @@ public class TestObjet5 : Objet
 {
     public override void OnEquip()
     {
-        Spawner.Instance.CosmicProbability = 1;
     }
 
     public override void Init()

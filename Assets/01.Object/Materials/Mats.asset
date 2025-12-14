@@ -12,8 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26e0a16962e9c924dbc0fe713a2d37c5, type: 3}
   m_Name: Mats
   m_EditorClassIdentifier: 
-  materials:
-  - {fileID: 2100000, guid: a21e2742111a79e4fae0c33010abc7cc, type: 2}
-  - {fileID: -876546973899608171, guid: 806caf9dd7ba33a4b8f7c65165b6d9f6, type: 3}
-  - {fileID: 2100000, guid: 590174c40f61a324f9d54e832301d50e, type: 2}
-  - {fileID: 2100000, guid: 05ba3f1a145086949a0d51558d353bfe, type: 2}
+  pairs:
+  - mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    materials:
+    - {fileID: -876546973899608171, guid: 806caf9dd7ba33a4b8f7c65165b6d9f6, type: 3}
+  - mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    materials:
+    - {fileID: 2100000, guid: c1f9b49115b6a0b49ab8ac21586d701f, type: 2}
+  - mesh: {fileID: 70948873267775455, guid: a79e428ef706ff948a6c3c0d7c93bca4, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 0da5d345bdf11d84bba472f381e8332b, type: 2}
+    - {fileID: 2100000, guid: c9898356c7866434caeb8bd143d787b5, type: 2}
+    - {fileID: -876546973899608171, guid: 8a16659e2655d1941a1be5347efdd361, type: 3}
+  - mesh: {fileID: 212370497460711607, guid: ad97ddefb29676f40aacebe749c3d367, type: 3}
+    materials:
+    - {fileID: 2100000, guid: 0da5d345bdf11d84bba472f381e8332b, type: 2}
+    - {fileID: 2100000, guid: c9898356c7866434caeb8bd143d787b5, type: 2}
+    - {fileID: 2100000, guid: c9898356c7866434caeb8bd143d787b5, type: 2}
+    - {fileID: -876546973899608171, guid: 8a16659e2655d1941a1be5347efdd361, type: 3}
+  - mesh: {fileID: -5495902117074765545, guid: d951e6970584e454e8998032781764d2, type: 3}
+    materials:
+    - {fileID: -876546973899608171, guid: b687aa90e878fe14e989adac93f9d2c1, type: 3}

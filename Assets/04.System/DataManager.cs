@@ -9,6 +9,8 @@ public class DataManager : MonoBehaviour
     List<string> Objets = new List<string>();
     private void Start()
     {
+        ResetData();
+
         Plask.Instance.Level = GetIntData("PlaskLevel", 1);
         UpgradeManager.Instance.PlaskGage.PlaskPoint = GetFloatData("PlaskPoint", 0);
 
@@ -18,6 +20,7 @@ public class DataManager : MonoBehaviour
 
         Objets = new List<string>(array);
         AddComponentByName(Objets);
+
     }
 
     public void AddComponentByName(List<string> componentName)
