@@ -9,15 +9,15 @@ public class UpgradeManager : MonoBehaviour
 
     
     public static UpgradeManager Instance;
-    public PlaskGage PlaskGage;
+    public FlaskGage FlaskGage;
     private void Awake()
     {
         Instance = this;
     }
 
     
-    public void UpgradePlask()
+    public void UpgradeFlask()
     {
-        Plask.Instance.Level += 1;
+        Flask.Instance.Level += 1;
     }
 }

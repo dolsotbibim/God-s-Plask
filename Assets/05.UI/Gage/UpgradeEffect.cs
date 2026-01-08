@@ -13,9 +13,11 @@ public class UpgradeEffectPS : MonoBehaviour
     Color[] colors =
     {
         new Color(131 / 255f, 191 / 255f, 0) * 3.4f,
+        new Color(44 / 255f, 0 / 255f, 191 / 255f) * 10.41f,
+        new Color(44 / 255f, 0 / 255f, 191 / 255f) * 10.41f,
         new Color(44 / 255f, 0 / 255f, 191 / 255f) * 10.41f
     };
-    public Transform[] Targets = new Transform[2];
+    Transform[] Targets = new Transform[4];
 
     int setTarget = -1;
     public void SetTarget(int i, Vector3 pos, float point)
@@ -28,8 +30,10 @@ public class UpgradeEffectPS : MonoBehaviour
         pointPerParticle = point;
         if (setTarget == i) return;
 
-        Targets[0] = UpgradeManager.Instance.PlaskGage.Floor;
-        //Targets[1] = Plask.Instance.Center;
+        Targets[0] = UpgradeManager.Instance.FlaskGage.Floor;
+        Targets[1] = ObjetManager.Instance.CosmicOre;
+        Targets[2] = ObjetManager.Instance.NewObjet1.GetComponent<RectTransform>();
+        Targets[3] = ObjetManager.Instance.NewObjet2.GetComponent<RectTransform>();
         setTarget = i;
 
         ps.GetComponent<ParticleSystemRenderer>().material.color = colors[i];
@@ -54,26 +58,37 @@ public class UpgradeEffectPS : MonoBehaviour
             particles = new Particle[ps.main.maxParticles];
 
         int numParticles = ps.GetParticles(particles);
-
         for (int i = 0; i < numParticles; i++)
         {
             Particle p = particles[i];
             float elapsedTime = p.startLifetime - p.remainingLifetime;
-
-            if (elapsedTime > 1f)
+            if(setTarget == 0 && elapsedTime > 1f)
             {
-                float t = (elapsedTime - 1f) / 1f;
+                float t = (elapsedTime - 1f) / 2f;
                 t = Mathf.Clamp01(t);
-
+                p.position = Vector3.Lerp(p.position, target.position, t);
+            }
+            else if (setTarget == 1 && elapsedTime > 0.25f)
+            {
+                float t = (elapsedTime - 0.25f) / 0.4f;
+                t = Mathf.Clamp01(t);
+                p.position = Vector3.Lerp(p.position, target.position, t);
+            }
+            else if ((setTarget == 2 || setTarget == 3) && elapsedTime > 0.25f)
+            {
+                float t = (elapsedTime - 0.25f) / 1f;
+                t = Mathf.Clamp01(t);
                 p.position = Vector3.Lerp(p.position, target.position, t);
             }
 
-            float dist = Vector2.Distance(p.position, target.position);
+            float dist = Vector3.Distance(p.position, target.position);
 
-            if (dist < 1f)
+            if (dist < 0.1f && p.remainingLifetime > 0)
             {
-                Plask.Instance.UpdateScale(pointPerParticle);
-                p.remainingLifetime = 0f;
+                if (setTarget == 0)
+                    Flask.Instance.UpdateScale(pointPerParticle);
+
+                p.remainingLifetime = -1f;
             }
             particles[i] = p;
         }

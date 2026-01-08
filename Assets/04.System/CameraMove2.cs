@@ -19,6 +19,8 @@ public class CameraMove2 : MonoBehaviour
 
     private void Update()
     {
+        if (CameraLookController.instance.isShaking) return;
+        
         if(camera.orthographicSize - initialScale * size > 0.01f)
             camera.orthographicSize = Mathf.Lerp(camera.orthographicSize, initialScale * size, 0.1f);
         else

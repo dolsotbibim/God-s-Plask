@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using UnityEditor;
 using UnityEngine;
 
 namespace Redcode.Pools
@@ -62,6 +61,11 @@ namespace Redcode.Pools
 
             foreach (var poolData in _pools)
             {
+                if (poolData.Component == null)
+                {
+                    Debug.LogError($"PoolManager: '{poolData.Name}'의 Component가 할당되지 않았습니다.");
+                    continue;
+                }
                 var poolType = genericPoolType.MakeGenericType(poolData.Component.GetType());
                 var createMethod = poolType.GetMethod("Create", BindingFlags.Static | BindingFlags.NonPublic);
 

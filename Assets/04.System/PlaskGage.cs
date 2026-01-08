@@ -6,16 +6,16 @@ using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.ParticleSystem;
 
-public class PlaskGage : MonoBehaviour
+public class FlaskGage : MonoBehaviour
 {
     public Image Fill;
     public TextMeshProUGUI PercentageText;
-    public float Percentage = 0;
+    float Percentage = 0;
     public RectTransform ParticleSystem;
     public RectTransform Target;
     bool IsUpgrading = false;
     float temp = 0;
-    private float plaskPoint;
+    private float flaskPoint;
     public float UpgradeDuration = 1f;
     Vector2 psStartPos;
     public Transform Floor;
@@ -28,42 +28,42 @@ public class PlaskGage : MonoBehaviour
         ParticleComp = ParticleSystem.GetComponent<ParticleSystem>();
     }
 
-    public float PlaskPoint
+    public float FlaskPoint
     {
-        get { return plaskPoint; }
+        get { return flaskPoint; }
         set
         {
-            plaskPoint = value;
-            DataManager.SetFloatData("PlaskPoint", plaskPoint);
-            Percentage = plaskPoint / Plask.Instance.RequiredPlaskPoint * 100f;
+            flaskPoint = value;
+            SoundManager.Instance.PlayPitchSFX(4, Percentage / 100 - 0.5f, 1f);
 
+            DataManager.SetFloatData("FlaskPoint", flaskPoint);
+            Percentage = flaskPoint / Flask.Instance.RequiredFlaskPoint * 100f;
             if (!IsUpgrading)
             {
-                float ratio = Mathf.Clamp01(plaskPoint / Plask.Instance.RequiredPlaskPoint);
+                float ratio = Mathf.Clamp01(flaskPoint / Flask.Instance.RequiredFlaskPoint);
                 UpdateUIDotween(ratio, 0.1f);
             }
 
             if (Percentage >= 100f)
-                StartCoroutine(UpgradePlask());
+                StartCoroutine(UpgradeFlask());
         }
     }
 
     public void AddPoint(float point)
     {
         if (!IsUpgrading)
-            PlaskPoint += point;
+            FlaskPoint += point;
         else
             temp += point;
     }
 
-    IEnumerator UpgradePlask()
+    IEnumerator UpgradeFlask()
     {
         if (IsUpgrading) yield break;
         IsUpgrading = true;
 
-        float required = Plask.Instance.RequiredPlaskPoint;
+        float required = Flask.Instance.RequiredFlaskPoint;
         float overage = (Percentage - 100f) / 100f * required;
-
         UpgradeEffectPS ps = Spawner.Instance.PoolManager.GetFromPool<UpgradeEffectPS>();
 
         float duration = UpgradeDuration;
@@ -72,29 +72,29 @@ public class PlaskGage : MonoBehaviour
         yield return StartCoroutine(ParticleRoutine());
 
         Percentage = 0f;
-        yield return new WaitForSeconds(1.5f);
-        UpgradeManager.Instance.UpgradePlask();
+        yield return new WaitForSeconds(2f);
+        UpgradeManager.Instance.UpgradeFlask();
         Spawner.Instance.PoolManager.TakeToPool<UpgradeEffectPS>(ps);
 
         IsUpgrading = false;
         float finalRemainingPoint = overage + temp;
-        PlaskPoint = finalRemainingPoint;
+        FlaskPoint = finalRemainingPoint;
         temp = 0;
 
         IEnumerator ParticleRoutine()
         {
             int x = 0;
-
-            while (x < 100)
+            SoundManager.Instance.PlaySFX(5, 0.25f, false);
+            while (x < 50)
             {
-                plaskPoint = required / 100 * (100 - x);
-                UpdateUIDotween((100 - x) / 100f, 0f);
-                Percentage = 100 - x;
-                DataManager.SetFloatData("PlaskPoint", plaskPoint);
-                ps.SetTarget(0, Target.position, (Plask.Instance.NextScale - Plask.Instance.CurrentScale) / 100);
-                ps.Emit(1);
+                flaskPoint = required / 100 * (100 - x * 2);
+                UpdateUIDotween((100 - x * 2) / 100f, 0f);
+                Percentage = 100 - x * 2;
+                DataManager.SetFloatData("FlaskPoint", flaskPoint);
+                ps.SetTarget(0, Target.position, (Flask.Instance.NextScale - Flask.Instance.CurrentScale) / 100f * 2);
+                ps.Emit(2);
                 x++;
-                yield return new WaitForSeconds(duration / 100);
+                yield return null;
             }
         }
     }

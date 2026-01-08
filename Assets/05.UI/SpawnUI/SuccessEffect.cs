@@ -1,7 +1,5 @@
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class SuccessEffect : MonoBehaviour
 {
@@ -21,7 +19,7 @@ public class SuccessEffect : MonoBehaviour
     ParticleSystem.MainModule FlashMainModule;
     ParticleSystem.MainModule ParticleMainModule;
 
-    Color[] colors =
+    public static Color[] colors =
     {
         Color.red * 2.16f,      
         Color.yellow * 1.50f,   
@@ -55,10 +53,18 @@ public class SuccessEffect : MonoBehaviour
     public void StartEffect(int SuccessLevel, float Pos)
     {
         if (SuccessLevel == 0) return;
-        RingPSRenderer.material.color = colors[SuccessLevel - 1];
-        FlashPSRenderer.material.color = colors[SuccessLevel - 1] * 2;
-        ParticlePSRenderer.material.color = colors[SuccessLevel - 1] * 2;
-
+        if (SuccessLevel >= 11)
+        {
+            RingPSRenderer.material.color = Color.white * 2;
+            FlashPSRenderer.material.color = Color.white * 2;
+            ParticlePSRenderer.material.color = Color.white * 2;
+        }
+        else
+        {
+            RingPSRenderer.material.color = colors[(SuccessLevel - 1) % 5];
+            FlashPSRenderer.material.color = colors[(SuccessLevel - 1) % 5] * 2;
+            ParticlePSRenderer.material.color = colors[(SuccessLevel - 1) % 5] * 2;
+        }
         RingRect.anchoredPosition = new Vector3(Pos, 0, 0);
         FlashRect.anchoredPosition = new Vector3(Pos, 0, 0);
         ParticleRect.anchoredPosition = new Vector3(Pos, 0, 0);
@@ -67,7 +73,7 @@ public class SuccessEffect : MonoBehaviour
         else if(SuccessLevel == 2) StartCoroutine(Success2());
         else if (SuccessLevel == 3) StartCoroutine(Success3());
         else if (SuccessLevel == 4) StartCoroutine(Success4());
-        else if (SuccessLevel == 5) StartCoroutine(Success5());
+        else if (SuccessLevel >= 5) StartCoroutine(Success5());
     }
 
     IEnumerator Success1()

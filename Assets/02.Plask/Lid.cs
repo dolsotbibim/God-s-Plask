@@ -5,7 +5,6 @@ using UnityEngine;
 public class Lid : MonoBehaviour
 {
     public static Lid Instance;
-    public GameObject WarningSign;
     public List<GameObject> Objects = new List<GameObject>();
     public Material mat;
     private void OnEnable()
@@ -21,16 +20,21 @@ public class Lid : MonoBehaviour
                 if (obj.activeSelf && obj.GetComponent<Object>().PreventingChange == false)
                     obj.GetComponent<Object>().LidTime += 1;
             }
-            StartCoroutine(SetLidColor());
+            if(ColorRoutine == null) ColorRoutine = StartCoroutine(SetLidColor());
         }
-    }   
-
+    }
+    Coroutine ColorRoutine = null;
     IEnumerator SetLidColor()
     {
         mat.SetColor("_Color", Color.red);
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.2f);
         mat.SetColor("_Color", Color.white);
+        ColorRoutine = null;
+    }
 
+    private void Start()
+    {
+        mat.SetColor("_Color", Color.white);
     }
 
     public void UpdateLidObjects()

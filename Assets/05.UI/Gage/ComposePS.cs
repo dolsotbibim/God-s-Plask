@@ -25,10 +25,10 @@ public class DecomposePS : MonoBehaviour
         transform.position = pos;
         pointPerParticle = point;
         ShapeModule shapeModule = ps.shape;
-        shapeModule.radius = scale;
+        shapeModule.radius = scale * Spawner.Instance.transform.localScale.x / 3;
         if (setTarget == i) return;
         setTarget = i;
-        Targets[0] = UpgradeManager.Instance.PlaskGage.Target;
+        Targets[0] = UpgradeManager.Instance.FlaskGage.Target;
         Targets[1] = ObjetManager.Instance.CosmicGage.Target;
         ps.GetComponent<ParticleSystemRenderer>().material.color = colors[i];
         target = Targets[i];
@@ -38,7 +38,7 @@ public class DecomposePS : MonoBehaviour
     void OnParticleCollision(GameObject other)
     {
         if(setTarget == 0)
-            UpgradeManager.Instance.PlaskGage.AddPoint(pointPerParticle);
+            UpgradeManager.Instance.FlaskGage.AddPoint(pointPerParticle);
         if(setTarget == 1)
             ObjetManager.Instance.CosmicGage.AddPoint(pointPerParticle);
     }
